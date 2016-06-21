@@ -1,25 +1,25 @@
 
-var node = {
-	element:'div',//½ÚµãÃû
-	attrs:{//½ÚµãÊôĞÔ¼¯ºÏ
+var demoNode = {
+	element:'div',//èŠ‚ç‚¹å
+	attributes:{//èŠ‚ç‚¹å±æ€§é›†åˆ
 		id:'nodeId',
 		name:'nodeName',
 		style:'margin: 20px 0 0 0;',
 		"data-url":'dataurl'
 	},
 	innerText:'',//innerHTML
-	childrens://º¢×Ó½Úµã¼¯ºÏ
+	childrens://å­©å­èŠ‚ç‚¹é›†åˆ
 	[
 		{
 			element:'img',
-			attrs:{
+			attributes:{
 				id:'nodeId2',
 				src:'http://url.img'
 			}
 		},
 		{
 			element:'button',
-			attrs:{
+			attributes:{
 				type:'submit'
 			},
 			innerText:'Submit',
@@ -33,42 +33,51 @@ var node = {
 };
 
 var nodes = [
-	node , node
+	demoNode , demoNode
 ];
 
-for(var item in node.attrs)
+for(var item in node.attributes)
 {
 	var key = item;
-	var value = node.attrs[key];
+	var value = node.attributes[key];
 	console.log(key + ":" + value);
 }
 
-//¹¹½¨dom½á¹¹
+//æ„å»ºdomç»“æ„
 var jsNode = {
-	/*¶Ôµ¥¸öjson¶ÔÏó*/
-	createELementByJson:function(jsonObject){
+	//æ ¹æ®æŒ‡å®šæ ¼å¼çš„jsonåˆ›å»ºdomèŠ‚ç‚¹
+	createELementByJson : function (jsonObject) {
 		var root = document.createElement(jsonObject.element);
-		for(var key in jsonObject.attrs){
+		for (var key in jsonObject.attributes) {
 			var key = key;
-			var value = jsonObject.attrs[key];
-			root.setAttribute(key,value);
+			var value = jsonObject.attributes[key];
+			if(value == undefined){
+				continue;
+			}
+			root.setAttribute(key, value);
 		}
-		if(jsonObject.innerText != undefined && jsonObject.innerText != ''){
+		if (jsonObject.innerText != undefined && jsonObject.innerText != '') {
 			root.innerHTML = jsonObject.innerText;
 		}
 		var childrens = jsonObject.childrens;
-		if(childrens != undefined && childrens.length != 0){
-			for(var i=0 ;i < childrens.length ;i++){
-				var childrenNode = this.createELementByJson(childrens[i]);
-				root.appendChild(childrenNode);
-			}
+		if (childrens != undefined && childrens.length != 0) {
+			root.appendChild(this.createDocumentFragmentByJsonArray(childrens));
 		}
 		return root;
 	},
-	/*json¶ÔÏóÊı×é*/
-	createELementByJsonArray:function(jsonObjectArray){
+	//æ ¹æ®æŒ‡å®šæ ¼å¼çš„jsonæ•°ç»„åˆ›å»ºdomæ–‡ä»¶ç¢ç‰‡èŠ‚ç‚¹æ•°ç»„
+	createDocumentFragmentByJsonArray : function (jsonObjectArray) {
+		var domcumentFragment = document.createDocumentFragment();
+		for (var i = 0; i < jsonObjectArray.length; i++) {
+			var tempElement = this.createELementByJson(jsonObjectArray[i]);
+			domcumentFragment.appendChild(tempElement);
+		}
+		return domcumentFragment;
+	},
+	//æ ¹æ®æŒ‡å®šæ ¼å¼jsonæ•°ç»„åˆ›å»ºdomèŠ‚ç‚¹æ•°ç»„
+	createElementsByJsonArray : function (jsonObjectArray) {
 		var domArray = new Array();
-		for(var i=0 ;i < jsonObjectArray.length ;i++){
+		for (var i = 0; i < jsonObjectArray.length; i++) {
 			var tempElement = this.createELementByJson(jsonObjectArray[i]);
 			domArray.push(tempElement);
 		}
@@ -76,8 +85,9 @@ var jsNode = {
 	}
 };
 
+
 //sample
-jsNode.createELementByJson(node);
+jsNode.createELementByJson(demoNode);
 
 
 
